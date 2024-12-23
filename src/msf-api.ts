@@ -71,7 +71,10 @@ export const fetchForReq = async (
   const tokenset = req.user?.tokenset
 
   // If there's no access_token, abort early.
-  if (!tokenset?.access_token) throw new Error("Missing access_token.")
+  if (!tokenset?.access_token) {
+    console.error("Missing access token")
+    return { status: 401, ok: false, json: async () => ({}) }
+  }
 
   // Step 1: Make the initial attempt.
   const response1 = await _apiFetch(route, method, tokenset.access_token)

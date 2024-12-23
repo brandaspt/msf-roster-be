@@ -5,6 +5,7 @@ import { fetchForReq, fetchForServer } from "../msf-api"
 type Character = {
   id: string
   portrait: string
+  name: string
 }
 
 type RosterCharacter = {
@@ -19,9 +20,14 @@ export const handleMyRoster = async (req: Request, res: Response) => {
     fetchForServer("/game/v1/characters")
   ])
 
-  if (!rosterResp.ok) res.sendStatus(rosterResp.status)
-
-  if (!charsResp.ok) res.sendStatus(500)
+  if (!rosterResp.ok) {
+    res.sendStatus(rosterResp.status)
+    return
+  }
+  if (!charsResp.ok) {
+    res.sendStatus(500)
+    return
+  }
 
   const [rosterData, charsData] = await Promise.all([
     rosterResp.json(),
@@ -32,8 +38,8 @@ export const handleMyRoster = async (req: Request, res: Response) => {
   const chars: Character[] = charsData?.data ?? []
 
   const normalizedData = rosterChars.map(({ id, level, power }) => {
-    const { portrait = "" } = chars.find(c => c.id === id) ?? {}
-    return { id, level, power, portrait }
+    const { portrait = "", name } = chars.find(c => c.id === id) ?? {}
+    return { id, level, power, portrait, name }
   })
 
   res.send(normalizedData)

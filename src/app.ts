@@ -8,10 +8,11 @@ import { RedisStore } from "connect-redis"
 import { createClient } from "redis"
 import { envVars } from "./config"
 import { handleMyRoster } from "./handlers/my-roster"
+import cors from "cors"
+import { handleMyCard } from "./handlers/my-card"
 
 const PORT = 5001
-const SCOPE =
-  "m3p.f.pr.pro m3p.f.pr.ros m3p.f.pr.act m3p.f.pr.inv openid offline"
+const SCOPE = "m3p.f.pr.pro m3p.f.pr.ros openid offline"
 
 // Helper function to convert an OAuth2/OpenID response to a user
 function tokensToUser(tokenset: TokenSet, claims: IdTokenClaims, done) {
@@ -85,19 +86,26 @@ const init = async () => {
   app.use(cookieParser())
   app.use(passport.initialize())
   app.use(passport.session())
+  app.use(
+    cors({
+      origin: "http://localhost:3000", // Replace with your frontend URL
+      credentials: true // Allow cookies to be sent
+    })
+  )
 
   app.get("/", async (req, res) => {
     res.send("Hello")
   })
 
   app.get("/my-roster", handleMyRoster)
+  app.get("/my-card", handleMyCard)
 
   app.get("/login", passport.authenticate("msf"))
   app.get(
     "/callback",
     passport.authenticate("msf", {
-      failureRedirect: envVars.APP_ROOT_URL,
-      successRedirect: envVars.APP_ROOT_URL
+      failureRedirect: envVars.FRONTEND_ROOT_URL,
+      successRedirect: envVars.FRONTEND_ROOT_URL
     })
   )
 
