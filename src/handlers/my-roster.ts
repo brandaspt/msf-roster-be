@@ -10,8 +10,8 @@ type Character = {
 
 type RosterCharacter = {
   id: string
-  level: number
   power: number
+  gearTier: number
 }
 
 export const handleMyRoster = async (req: Request, res: Response) => {
@@ -37,9 +37,9 @@ export const handleMyRoster = async (req: Request, res: Response) => {
   const rosterChars: RosterCharacter[] = rosterData?.data ?? []
   const chars: Character[] = charsData?.data ?? []
 
-  const normalizedData = rosterChars.map(({ id, level, power }) => {
+  const normalizedData = rosterChars.map(({ id, gearTier, power }) => {
     const { portrait = "", name } = chars.find(c => c.id === id) ?? {}
-    return { id, level, power, portrait, name }
+    return { id, gearTier, power, portrait, name }
   })
 
   res.send(normalizedData)
