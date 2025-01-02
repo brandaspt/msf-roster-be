@@ -1,15 +1,15 @@
-import express from "express"
-import { IdTokenClaims, Issuer, Strategy, TokenSet } from "openid-client"
 import bodyParser from "body-parser"
-import cookieParser from "cookie-parser"
-import session from "express-session"
-import passport from "passport"
 import { RedisStore } from "connect-redis"
+import cookieParser from "cookie-parser"
+import cors from "cors"
+import express from "express"
+import session from "express-session"
+import { IdTokenClaims, Issuer, Strategy, TokenSet } from "openid-client"
+import passport from "passport"
 import { createClient } from "redis"
 import { envVars } from "./config"
-import { handleMyRoster } from "./handlers/my-roster"
-import cors from "cors"
 import { handleMyCard } from "./handlers/my-card"
+import { handleMyRoster } from "./handlers/my-roster"
 
 const PORT = 5001
 const SCOPE = "m3p.f.pr.pro m3p.f.pr.ros openid offline"
@@ -58,7 +58,9 @@ const init = async () => {
   const app = express()
 
   // Initialize Redis client.
-  const redisClient = createClient()
+  const redisClient = createClient({
+    url: `redis://${envVars.REDIS_HOST}:${envVars.REDIS_PORT}`
+  })
   try {
     await redisClient.connect()
     // Initialize Redis store.

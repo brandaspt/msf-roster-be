@@ -7,5 +7,7 @@ export const envVars = {
   APP_CALLBACK_URL: process.env.APP_CALLBACK_URL,
   MSF_API_KEY: process.env.MSF_API_KEY,
   MSF_AUTH_URL: process.env.MSF_AUTH_URL,
-  SESSION_SECRET: process.env.SESSION_SECRET
+  SESSION_SECRET: process.env.SESSION_SECRET,
+  REDIS_HOST: process.env.REDIS_HOST || "localhost",
+  REDIS_PORT: process.env.REDIS_PORT || 6379
 }
